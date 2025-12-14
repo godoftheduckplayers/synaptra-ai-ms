@@ -1,10 +1,10 @@
 package com.ducks.devutils.agent;
 
+import com.ai.agentics.agent.Agent;
+import com.ai.agentics.agent.AgentType;
+import com.ai.agentics.agent.BaseAgent;
+import com.ai.agentics.agent.ProviderConfig;
 import com.ai.agentics.client.openai.data.ToolChoice;
-import com.ai.agentics.model.Agent;
-import com.ai.agentics.model.AgentType;
-import com.ai.agentics.model.BaseAgent;
-import com.ai.agentics.model.ProviderConfig;
 import java.util.List;
 
 public class DockyardSupervisor extends BaseAgent {

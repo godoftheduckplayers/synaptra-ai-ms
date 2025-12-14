@@ -1,14 +1,12 @@
 package com.ducks.devutils.controller;
 
 import com.ai.agentics.client.openai.data.*;
-import com.ai.agentics.orchestration.event.agent.contract.AgentRequestEvent;
-import com.ai.agentics.velocity.VelocityTemplateService;
+import com.ai.agentics.prompt.UserInputPublisher;
 import com.ducks.devutils.agent.DockyardSupervisor;
 import com.ducks.devutils.agent.PurchaseLogger;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,18 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ConversationController {
 
-  private final ApplicationEventPublisher publisher;
+  private final UserInputPublisher userInputPublisher;
 
   @GetMapping
   public Object test() {
-    Message user = new Message("user", "Quero registrar uma nova compra", null, null, null);
 
-    DockyardSupervisor dockyardSupervisor =
-        new DockyardSupervisor(
-            List.of(new PurchaseLogger()));
+    DockyardSupervisor dockyardSupervisor = new DockyardSupervisor(List.of(new PurchaseLogger()));
 
-    publisher.publishEvent(
-        new AgentRequestEvent(UUID.randomUUID().toString(), dockyardSupervisor, null, user));
+    userInputPublisher.publishEvent(
+        UUID.randomUUID().toString(), dockyardSupervisor, "Quero registrar uma nova compra");
 
     return null;
   }
