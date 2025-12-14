@@ -1,0 +1,34 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: ${SPRING_APPLICATION_NAME:devutils}
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/synaptra-ai}
+      database: ${MONGODB_DATABASE:synaptra-ai}
+      auto-index-creation: true
+  cloud:
+    compatibility-verifier:
+      enabled: ${SPRING_CLOUD_COMPATIBILITY_VERIFIER_ENABLED:false}
+
+logging:
+  level:
+    com.ai.agentics: DEBUG
+  pattern:
+    level: "%5p [traceId=%X{traceId:-}, spanId=%X{spanId:-}]"
+
+ai:
+  agentic:
+    tracing:
+      enabled: true
+      jaeger-endpoint: http://localhost:4318/v1/traces
+    client:
+      openai:
+        url: https://api.openai.com/v1/chat/completions
+        api-key: ${OPENAI_API_KEY}
+        connect-timeout-ms: 5000
+        response-timeout-ms: 5000
+        read-timeout-ms: 5000
+        write-timeout-ms: 5000
