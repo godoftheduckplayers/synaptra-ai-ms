@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>STOMP Test (Single Instance)</title>
+    <style>
+        body { font-family: system-ui, Arial; margin: 24px; }
+        .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+        input, button, select { padding: 10px; font-size: 14px; }
+        input { width: 260px; }
+        button { cursor: pointer; }
+        .box { border: 1px solid #ddd; border-radius: 8px; padding: 12px; }
+        #log { height: 320px; overflow: auto; background: #fafafa; }
+        .muted { color: #666; font-size: 13px; }
+        .pill { display: inline-block; padding: 2px 8px; border: 1px solid #ccc; border-radius: 999px; font-size: 12px; }
+        .ok { border-color: #1a7f37; color: #1a7f37; }
+        .bad { border-color: #b42318; color: #b42318; }
+        pre { margin: 0; white-space: pre-wrap; word-break: break-word; }
+    </style>
+</head>
+<body>
+<h2>STOMP / WebSocket - Teste (single instance)</h2>
+
+<div class="box">
+    <div class="row">
+        <label>WS URL:</label>
+        <input id="wsUrl" value="http://localhost:8080/ws"/>
+        <label>Conversation:</label>
+        <input id="conversationId" value="conv-1"/>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+        <label>Username (apenas p/ label):</label>
+        <input id="username" value="user-1"/>
+        <label>Channel:</label>
+        <select id="channel">
+            <option value="web">web</option>
+            <option value="voice">voice</option>
+        </select>
+        <span class="muted">deviceId:</span>
+        <span id="deviceId" class="pill"></span>
+        <span id="status" class="pill bad">desconectado</span>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+        <button id="btnConnect">Conectar</button>
+        <button id="btnDisconnect" disabled>Desconectar</button>
+        <button id="btnResub" disabled>Re-subscrever</button>
+    </div>
+</div>
+
+<div class="box" style="margin-top:16px;">
+    <div class="row">
+        <input id="message" style="width:520px" placeholder="Digite uma mensagem e envie..."/>
+        <button id="btnSend" disabled>Enviar (/app/chat.send)</button>
+    </div>
+    <p class="muted" style="margin-top:8px;">
+        Subscriptions:
+        <code id="subTopic"></code>
+        <span class="muted"> | </span>
+        <code id="subUser"></code>
+    </p>
+</div>
+
+<div class="box" style="margin-top:16px;">
+    <div class="row" style="justify-content:space-between;">
+        <strong>Log</strong>
+        <button id="btnClear">Limpar</button>
+    </div>
+    <div id="log" class="box" style="margin-top:10px;"></div>
+</div>
+
+<!-- libs via CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+<script>
+    // --------- helpers ----------
+    function uuid() {
+      // uuid simples suficiente p/ teste
+      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+        const r = (Math.random() * 16) | 0;
+        const v = c === "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
+    }
+    function $(id) { return document.getElementById(id); }
+
+    function log(line, obj) {
+      const el = document.createElement("div");
+      const ts = new Date().toISOString().slice(11, 19);
+      el.innerHTML = `<pre>[${ts}] ${line}${obj ? "\n" + JSON.stringify(obj, null, 2) : ""}</pre>`;
+      $("log").appendChild(el);
+      $("log").scrollTop = $("log").scrollHeight;
+    }
+
+    function setStatus(connected) {
+      const s = $("status");
+      if (connected) {
+        s.textContent = "conectado";
+        s.classList.remove("bad");
+        s.classList.add("ok");
+      } else {
+        s.textContent = "desconectado";
+        s.classList.remove("ok");
+        s.classList.add("bad");
+      }
+    }
+
+    // --------- state ----------
+    const deviceId = localStorage.getItem("stompDeviceId") || uuid();
+    localStorage.setItem("stompDeviceId", deviceId);
+    $("deviceId").textContent = deviceId;
+
+    let stompClient = null;
+    let subTopic = null;
+    let subUser = null;
+
+    function currentTopic() {
+      const conv = $("conversationId").value.trim();
+      return `/topic/conversations/${conv}`;
+    }
+
+    function currentUserQueue() {
+      // Pattern C: privado por device
+      // web: /user/queue/inbox.{deviceId}
+      // voice: /user/queue/voice.{deviceId}
+      const channel = $("channel").value;
+      const base = channel === "voice" ? "voice" : "inbox";
+      return `/user/queue/${base}.${deviceId}`;
+    }
+
+    function renderSubs() {
+      $("subTopic").textContent = currentTopic();
+      $("subUser").textContent = currentUserQueue();
+    }
+    renderSubs();
+
+    $("conversationId").addEventListener("input", renderSubs);
+    $("channel").addEventListener("change", renderSubs);
+
+    // --------- connect ----------
+    function connect() {
+      const wsUrl = $("wsUrl").value.trim();
+
+      // Dica: se você NÃO estiver usando SockJS no backend, use WebSocket direto:
+      // stompClient = Stomp.over(new WebSocket(wsUrl.replace(/^http/, "ws")));
+      // Aqui eu uso SockJS porque é o mais "plug and play" no browser.
+      const sock = new SockJS(wsUrl);
+      stompClient = Stomp.over(sock);
+
+      // menos ruído no console
+      stompClient.debug = null;
+
+      log("Conectando...", { wsUrl });
+
+      stompClient.connect(
+        {}, // headers
+        frame => {
+          setStatus(true);
+          log("Conectado", { frame });
+
+          $("btnConnect").disabled = true;
+          $("btnDisconnect").disabled = false;
+          $("btnResub").disabled = false;
+          $("btnSend").disabled = false;
+
+          subscribeAll();
+        },
+        err => {
+          setStatus(false);
+          log("Erro na conexão", { err });
+        }
+      );
+    }
+
+    function disconnect() {
+      try {
+        subTopic?.unsubscribe();
+        subUser?.unsubscribe();
+        subTopic = null;
+        subUser = null;
+      } catch (_) {}
+
+      if (stompClient) {
+        stompClient.disconnect(() => {
+          setStatus(false);
+          log("Desconectado");
+        });
+        stompClient = null;
+      }
+
+      $("btnConnect").disabled = false;
+      $("btnDisconnect").disabled = true;
+      $("btnResub").disabled = true;
+      $("btnSend").disabled = true;
+    }
+
+    function subscribeAll() {
+      if (!stompClient || !stompClient.connected) {
+        log("Não conectado, não foi possível subscrever");
+        return;
+      }
+
+      // unsubscribe anterior (se re-subscrever)
+      try { subTopic?.unsubscribe(); } catch (_) {}
+      try { subUser?.unsubscribe(); } catch (_) {}
+
+      const topic = currentTopic();
+      const userQ = currentUserQueue();
+
+      log("Subscribing...", { topic, userQ });
+
+      subTopic = stompClient.subscribe(topic, msg => {
+        safePrint("RECV (topic)", msg);
+      });
+
+      subUser = stompClient.subscribe(userQ, msg => {
+        safePrint("RECV (user)", msg);
+      });
+    }
+
+    function safePrint(label, msg) {
+      let payload = msg.body;
+      try { payload = JSON.parse(msg.body); } catch (_) {}
+      log(label, { destination: msg.headers.destination, payload });
+    }
+
+    // --------- send ----------
+    function sendMessage() {
+      if (!stompClient || !stompClient.connected) return;
+
+      const conv = $("conversationId").value.trim();
+      const username = $("username").value.trim();
+      const channel = $("channel").value;
+
+      const text = $("message").value.trim();
+      if (!text) return;
+
+      const payload = {
+        conversationId: conv,
+        from: username,
+        channel,      // "web" | "voice" (só para você diferenciar)
+        deviceId,     // Pattern C
+        text,
+        ts: Date.now()
+      };
+
+      // backend precisa ter @MessageMapping("/chat.send")
+      stompClient.send("/app/chat.send", {}, JSON.stringify(payload));
+      log("SEND /app/chat.send", payload);
+
+      $("message").value = "";
+    }
+
+    // --------- ui bindings ----------
+    $("btnConnect").addEventListener("click", connect);
+    $("btnDisconnect").addEventListener("click", disconnect);
+    $("btnResub").addEventListener("click", subscribeAll);
+    $("btnSend").addEventListener("click", sendMessage);
+    $("btnClear").addEventListener("click", () => $("log").innerHTML = "");
+
+    $("message").addEventListener("keydown", e => {
+      if (e.key === "Enter") sendMessage();
+    });
+</script>
+</body>
+</html>

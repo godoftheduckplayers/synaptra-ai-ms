@@ -24,7 +24,7 @@ public class ConversationController {
     DockyardSupervisor dockyardSupervisor = new DockyardSupervisor(List.of(new PurchaseLogger()));
 
     userInputPublisher.publishEvent(
-        UUID.randomUUID().toString(), dockyardSupervisor, "Quero registrar uma nova compra");
+        UUID.randomUUID().toString(), dockyardSupervisor, "Quero registrar uma compra de um iphone 16 na data de 20/10/2025 no valor de 5k");
 
     return null;
   }
