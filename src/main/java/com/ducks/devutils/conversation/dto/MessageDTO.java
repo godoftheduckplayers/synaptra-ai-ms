@@ -1,3 +1,6 @@
 package com.ducks.devutils.conversation.dto;
 
-public record MessageDTO(String content) {}
+import java.time.LocalDateTime;
+
+public record MessageDTO(
+    String uuid, String content, MessageType type, MessageStatus status, LocalDateTime date) {}

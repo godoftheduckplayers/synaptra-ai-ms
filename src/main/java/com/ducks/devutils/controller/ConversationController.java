@@ -5,7 +5,10 @@ import com.ai.agentics.prompt.UserInputPublisher;
 import com.ducks.devutils.agent.DockyardSupervisor;
 import com.ducks.devutils.agent.PurchaseLogger;
 import com.ducks.devutils.conversation.dto.MessageDTO;
+import com.ducks.devutils.conversation.dto.MessageStatus;
+import com.ducks.devutils.conversation.dto.MessageType;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +42,15 @@ public class ConversationController {
   }
 
   @MessageMapping("/conversation")
-  public void send(Message<MessageDTO> msg, Principal principal) {
-    template.convertAndSendToUser(principal.getName(), "/queue/conversation", msg);
+  public void send(Message<MessageDTO> message, Principal principal) {
+    template.convertAndSendToUser(
+        principal.getName(),
+        "/queue/conversation",
+        new MessageDTO(
+            UUID.randomUUID().toString(),
+            "Olá, como esta?",
+            MessageType.BOT,
+            MessageStatus.FINISHED,
+            LocalDateTime.now()));
   }
 }
