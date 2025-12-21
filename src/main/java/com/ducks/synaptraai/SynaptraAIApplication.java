@@ -8,9 +8,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 @EnableAIAgentic
 @SpringBootApplication
-public class DevutilsApplication {
+public class SynaptraAIApplication {
 
   public static void main(String[] args) {
-    SpringApplication.run(DevutilsApplication.class, args);
+    SpringApplication.run(SynaptraAIApplication.class, args);
   }
 }
