@@ -10,10 +10,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.ducks.devutils</groupId>
-    <artifactId>devutils</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>devutils</name>
+    <groupId>com.ducks.synaptraai</groupId>
+    <artifactId>synaptraai</artifactId>
+    <version>1.0.0</version>
+    <name>synaptraai</name>
     <description>Demo project for Spring Boot</description>
     <url>https://github.com/yourusername/agentics-ai</url>
 
