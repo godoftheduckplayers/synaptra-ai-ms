@@ -1,4 +1,4 @@
-package com.ducks.devutils;
+package com.ducks.synaptraai;
 
 import com.ai.agentics.annotation.EnableAIAgentic;
 import org.springframework.boot.SpringApplication;

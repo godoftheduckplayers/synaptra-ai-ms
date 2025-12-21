@@ -1,4 +1,4 @@
-package com.ducks.devutils.config;
+package com.ducks.synaptraai.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

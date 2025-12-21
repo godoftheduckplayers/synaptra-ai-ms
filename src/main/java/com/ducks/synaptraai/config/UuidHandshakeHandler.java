@@ -1,4 +1,4 @@
-package com.ducks.devutils.config;
+package com.ducks.synaptraai.config;
 
 import java.security.Principal;
 import java.util.Map;

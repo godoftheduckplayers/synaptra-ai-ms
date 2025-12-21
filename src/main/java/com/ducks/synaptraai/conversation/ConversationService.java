@@ -1,13 +1,13 @@
-package com.ducks.devutils.conversation;
+package com.ducks.synaptraai.conversation;
 
 import com.ai.agentics.orchestration.event.answer.AnswerExecutionListener;
 import com.ai.agentics.orchestration.event.answer.contract.AnswerResponseEvent;
 import com.ai.agentics.prompt.UserInputPublisher;
-import com.ducks.devutils.agent.DockyardSupervisor;
-import com.ducks.devutils.agent.PurchaseLogger;
-import com.ducks.devutils.conversation.dto.MessageDTO;
-import com.ducks.devutils.conversation.dto.MessageStatus;
-import com.ducks.devutils.conversation.dto.MessageType;
+import com.ducks.synaptraai.agent.DockyardSupervisor;
+import com.ducks.synaptraai.agent.PurchaseLogger;
+import com.ducks.synaptraai.conversation.dto.MessageDTO;
+import com.ducks.synaptraai.conversation.dto.MessageStatus;
+import com.ducks.synaptraai.conversation.dto.MessageType;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;

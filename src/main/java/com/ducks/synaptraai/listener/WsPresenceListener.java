@@ -1,4 +1,4 @@
-package com.ducks.devutils.listener;
+package com.ducks.synaptraai.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

@@ -1,8 +1,7 @@
-package com.ducks.devutils.controller;
+package com.ducks.synaptraai.controller;
 
-import com.ai.agentics.client.openai.data.*;
-import com.ducks.devutils.conversation.ConversationService;
-import com.ducks.devutils.conversation.dto.MessageDTO;
+import com.ducks.synaptraai.conversation.ConversationService;
+import com.ducks.synaptraai.conversation.dto.MessageDTO;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;

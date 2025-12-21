@@ -1,4 +1,4 @@
-package com.ducks.devutils.agent;
+package com.ducks.synaptraai.agent;
 
 import com.ai.agentics.agent.Agent;
 import com.ai.agentics.agent.AgentType;

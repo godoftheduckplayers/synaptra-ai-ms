@@ -1,4 +1,4 @@
-package com.ducks.devutils;
+package com.ducks.synaptraai;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
