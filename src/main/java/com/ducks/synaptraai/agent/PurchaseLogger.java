@@ -48,6 +48,13 @@ public class PurchaseLogger extends BaseAgent {
 
           Do not request information outside the defined procedure.
           The task is complete only when the purchase is successfully registered.
+        
+          Para registrar a compra de um celular voce precisa perguntar as seguintes informações:
+           - modelo;
+           - valor;
+           - data_compra;
+           
+          Após coletar esses dados finalize com uma mensagem de agradecimento
         """;
   }
 

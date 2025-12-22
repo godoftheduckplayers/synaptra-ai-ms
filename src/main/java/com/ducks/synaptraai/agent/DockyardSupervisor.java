@@ -13,6 +13,7 @@ public class DockyardSupervisor extends BaseAgent {
 
   public DockyardSupervisor(List<Agent> agentList) {
     this.agentList = agentList;
+    agentList.forEach(agent -> agent.setParent(this));
   }
 
   @Override
