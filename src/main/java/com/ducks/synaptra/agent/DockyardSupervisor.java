@@ -1,10 +1,6 @@
-package com.ducks.synaptraai.agent;
+package com.ducks.synaptra.agent;
 
-import com.ai.agentics.agent.Agent;
-import com.ai.agentics.agent.AgentType;
-import com.ai.agentics.agent.BaseAgent;
-import com.ai.agentics.agent.ProviderConfig;
-import com.ai.agentics.client.openai.data.ToolChoice;
+import com.ducks.synaptra.client.openai.data.ToolChoice;
 import java.util.List;
 
 public class DockyardSupervisor extends BaseAgent {

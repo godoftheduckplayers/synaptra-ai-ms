@@ -1,4 +1,4 @@
-package com.ducks.synaptraai.conversation.dto;
+package com.ducks.synaptra.conversation.dto;
 
 public enum MessageStatus {
   ERROR,

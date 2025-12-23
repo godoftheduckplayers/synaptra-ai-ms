@@ -1,6 +1,6 @@
-package com.ducks.synaptraai;
+package com.ducks.synaptra;
 
-import com.ai.agentics.annotation.EnableAIAgentic;
+import com.ducks.synaptra.annotation.EnableAIAgentic;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;

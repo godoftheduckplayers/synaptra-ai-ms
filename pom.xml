@@ -10,10 +10,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.ducks.synaptraai</groupId>
-    <artifactId>synaptraai</artifactId>
+    <groupId>com.ducks.synaptra</groupId>
+    <artifactId>synaptra-ai-ms</artifactId>
     <version>1.0.0</version>
-    <name>synaptraai</name>
+    <name>synaptra-ai-ms</name>
     <description>Demo project for Spring Boot</description>
     <url>https://github.com/yourusername/agentics-ai</url>
 
@@ -33,8 +33,8 @@
 
         <!-- Agentics AI -->
         <dependency>
-            <groupId>com.ai.agentics</groupId>
-            <artifactId>ai</artifactId>
+            <groupId>com.ducks.synaptra</groupId>
+            <artifactId>synaptra-ai-lib</artifactId>
             <version>1.0.0</version>
         </dependency>
 

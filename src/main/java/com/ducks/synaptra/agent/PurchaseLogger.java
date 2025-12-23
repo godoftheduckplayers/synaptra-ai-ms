@@ -1,11 +1,7 @@
-package com.ducks.synaptraai.agent;
+package com.ducks.synaptra.agent;
 
-import com.ai.agentics.agent.Agent;
-import com.ai.agentics.agent.AgentType;
-import com.ai.agentics.agent.BaseAgent;
-import com.ai.agentics.agent.ProviderConfig;
-import com.ai.agentics.client.openai.data.Tool;
-import com.ai.agentics.client.openai.data.ToolChoice;
+import com.ducks.synaptra.client.openai.data.Tool;
+import com.ducks.synaptra.client.openai.data.ToolChoice;
 import java.util.List;
 
 public class PurchaseLogger extends BaseAgent {
@@ -48,12 +44,12 @@ public class PurchaseLogger extends BaseAgent {
 
           Do not request information outside the defined procedure.
           The task is complete only when the purchase is successfully registered.
-        
+
           Para registrar a compra de um celular voce precisa perguntar as seguintes informações:
            - modelo;
            - valor;
            - data_compra;
-           
+
           Após coletar esses dados finalize com uma mensagem de agradecimento
         """;
   }
