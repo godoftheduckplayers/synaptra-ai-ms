@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: ${SPRING_APPLICATION_NAME:devutils}
+    name: ${SPRING_APPLICATION_NAME:synaptra-ai-ms}
   data:
     mongodb:
       uri: ${MONGODB_URI:mongodb://localhost:27017/synaptra-ai}
@@ -21,9 +21,6 @@ logging:
 
 ai:
   agentic:
-    tracing:
-      enabled: true
-      jaeger-endpoint: http://localhost:4318/v1/traces
     client:
       openai:
         url: https://api.openai.com/v1/chat/completions
@@ -32,3 +29,14 @@ ai:
         response-timeout-ms: 5000
         read-timeout-ms: 5000
         write-timeout-ms: 5000
+
+synaptra:
+  logging:
+    serviceName: synaptra-ai-ms
+    scopeName: synaptra-scope
+    jaeger-endpoint: http://localhost:4318/v1/traces
+
+  tool:
+    excel:
+      storage:
+        path: ${TOOL_EXCEL_STORAGE_PATH:/tmp/}

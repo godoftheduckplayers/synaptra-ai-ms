@@ -1,7 +1,10 @@
 package com.ducks.synaptra.agent;
 
+import com.ducks.synaptra.client.openai.data.Parameter;
+import com.ducks.synaptra.client.openai.data.ParameterProperty;
 import com.ducks.synaptra.client.openai.data.Tool;
 import com.ducks.synaptra.client.openai.data.ToolChoice;
+import com.ducks.synaptra.tool.model.ExcelTool;
 import java.util.List;
 
 public class PurchaseLogger extends BaseAgent {
@@ -45,18 +48,27 @@ public class PurchaseLogger extends BaseAgent {
           Do not request information outside the defined procedure.
           The task is complete only when the purchase is successfully registered.
 
-          Para registrar a compra de um celular voce precisa perguntar as seguintes informações:
-           - modelo;
-           - valor;
-           - data_compra;
-
           Após coletar esses dados finalize com uma mensagem de agradecimento
         """;
   }
 
   @Override
   public List<Tool> tools() {
-    return super.tools();
+    List<Tool> tools = super.tools();
+    Parameter parameter = new Parameter();
+    parameter.addProperty(
+        "item", new ParameterProperty("string", "Descrição do item/compra."), true);
+    parameter.addProperty("valor", new ParameterProperty("number", "Valor total da compra"), true);
+    parameter.addProperty("dataCompra", new ParameterProperty("string", "Data da compra."), true);
+
+    ExcelTool excelTool =
+        new ExcelTool(
+            "extract_purchase_data",
+            "Função de registrar compras, essa função é chamada para registrar compras e salvar em um excel, uso essa função para coletar os dados necessários, e após coletar execute essa função para salvar os dados no excel",
+            parameter);
+
+    tools.add(new Tool(excelTool));
+    return tools;
   }
 
   @Override

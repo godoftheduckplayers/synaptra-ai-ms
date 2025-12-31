@@ -3,11 +3,11 @@ package com.ducks.synaptra.agent;
 import com.ducks.synaptra.client.openai.data.ToolChoice;
 import java.util.List;
 
-public class DockyardSupervisor extends BaseAgent {
+public class SynaptraSupervisor extends BaseAgent {
 
   private final List<Agent> agentList;
 
-  public DockyardSupervisor(List<Agent> agentList) {
+  public SynaptraSupervisor(List<Agent> agentList) {
     this.agentList = agentList;
     agentList.forEach(agent -> agent.setParent(this));
   }

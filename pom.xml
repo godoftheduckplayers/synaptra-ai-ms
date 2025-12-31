@@ -22,7 +22,20 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <log4j-api.version>2.17.1</log4j-api.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>2.25.3</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Spring Boot Starter Web -->
@@ -31,10 +44,24 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Agentics AI -->
+        <!-- Synaptra Ai Lib -->
         <dependency>
             <groupId>com.ducks.synaptra</groupId>
             <artifactId>synaptra-ai-lib</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- Synaptra Tool Lib -->
+        <dependency>
+            <groupId>com.ducks.synaptra</groupId>
+            <artifactId>synaptra-ai-tool-lib</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- Synaptra Log Lib -->
+        <dependency>
+            <groupId>com.ducks.synaptra</groupId>
+            <artifactId>synaptra-ai-log-lib</artifactId>
             <version>1.0.0</version>
         </dependency>
 
@@ -53,9 +80,38 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Websockt -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+
+        <!-- Tracing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-otel</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api</artifactId>
+        </dependency>
+
+        <!-- Logger -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j-api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
     </dependencies>
 

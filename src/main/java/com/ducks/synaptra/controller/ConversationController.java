@@ -2,6 +2,7 @@ package com.ducks.synaptra.controller;
 
 import com.ducks.synaptra.conversation.ConversationService;
 import com.ducks.synaptra.conversation.dto.MessageDTO;
+import com.ducks.synaptra.log.LogTracer;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
@@ -16,8 +17,9 @@ public class ConversationController {
 
   private final ConversationService conversationService;
 
+  @LogTracer(spanName = "conversation")
   @MessageMapping("/conversation")
   public void send(Message<MessageDTO> message, Principal principal) {
-    conversationService.conversation(message, principal.getName());
+    conversationService.processMessage(message, principal.getName());
   }
 }
