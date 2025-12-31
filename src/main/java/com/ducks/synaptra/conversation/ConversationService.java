@@ -11,7 +11,7 @@ import com.ducks.synaptra.orchestration.event.agent.AgentExecutionListener;
 import com.ducks.synaptra.orchestration.event.agent.contract.AgentResponseEvent;
 import com.ducks.synaptra.orchestration.event.answer.AnswerExecutionListener;
 import com.ducks.synaptra.orchestration.event.answer.contract.AnswerResponseEvent;
-import com.ducks.synaptra.prompt.UserInputPublisher;
+import com.ducks.synaptra.publisher.UserInputPublisher;
 import java.time.LocalDateTime;
 import java.util.*;
 import lombok.RequiredArgsConstructor;
