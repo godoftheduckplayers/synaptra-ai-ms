@@ -10,32 +10,32 @@ import java.util.List;
 public class PurchaseLogger extends BaseAgent {
 
   @Override
-  public String identifier() {
+  public String getIdentifier() {
     return "00d62c0b-430c-41ce-a819-cfb4703cef77";
   }
 
   @Override
-  public String name() {
+  public String getName() {
     return "PurchaseLogger";
   }
 
   @Override
-  public String goal() {
+  public String getGoal() {
     return "Purchase Activity Logging Agent";
   }
 
   @Override
-  public AgentType agentType() {
+  public AgentType getAgentType() {
     return AgentType.AGENT;
   }
 
   @Override
-  public ProviderConfig providerConfig() {
+  public ProviderConfig getProviderConfig() {
     return new ProviderConfig("gpt-4o-mini", 0.2, 256, 1.0);
   }
 
   @Override
-  public String prompt() {
+  public String getPrompt() {
 
     return """
           You are a $name
@@ -53,8 +53,8 @@ public class PurchaseLogger extends BaseAgent {
   }
 
   @Override
-  public List<Tool> tools() {
-    List<Tool> tools = super.tools();
+  public List<Tool> getTools() {
+    List<Tool> tools = super.getTools();
     Parameter parameter = new Parameter();
     parameter.addProperty(
         "item", new ParameterProperty("string", "Descrição do item/compra."), true);
@@ -72,12 +72,12 @@ public class PurchaseLogger extends BaseAgent {
   }
 
   @Override
-  public List<Agent> agents() {
+  public List<Agent> getAgents() {
     return List.of();
   }
 
   @Override
-  public ToolChoice toolChoice() {
+  public ToolChoice getToolChoice() {
     return ToolChoice.AUTO;
   }
 }
