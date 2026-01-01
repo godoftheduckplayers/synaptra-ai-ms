@@ -48,7 +48,7 @@ public class PurchaseLogger extends BaseAgent {
           Do not request information outside the defined procedure.
           The task is complete only when the purchase is successfully registered.
 
-          Após coletar esses dados finalize com uma mensagem de agradecimento
+          Sempre pergunte todos os dados necessários para o cliente, nunca faça um auto preenchimento dos campos
         """;
   }
 
@@ -64,7 +64,7 @@ public class PurchaseLogger extends BaseAgent {
     ExcelTool excelTool =
         new ExcelTool(
             "extract_purchase_data",
-            "Função de registrar compras, essa função é chamada para registrar compras e salvar em um excel, uso essa função para coletar os dados necessários, e após coletar execute essa função para salvar os dados no excel",
+            "Função de registrar compras, essa função é chamada para registrar compras e salvar em um excel",
             parameter);
 
     tools.add(new Tool(excelTool));
