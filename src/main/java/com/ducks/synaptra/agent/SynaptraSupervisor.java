@@ -28,6 +28,11 @@ public class SynaptraSupervisor extends BaseAgent {
   }
 
   @Override
+  public boolean isSupportsInterimMessages() {
+    return true;
+  }
+
+  @Override
   public AgentType getAgentType() {
     return AgentType.SUPERVISOR;
   }
@@ -49,6 +54,10 @@ public class SynaptraSupervisor extends BaseAgent {
          Available agents:
          #foreach($agent in $agents)
          - $agent.getName(): $agent.getGoal()
+         #end
+
+         #if($isSupportsInterimMessages)
+          When using the routing function, generate a simple waiting message explaining what will be executed.
          #end
         """;
   }

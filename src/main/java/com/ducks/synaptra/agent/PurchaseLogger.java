@@ -25,6 +25,11 @@ public class PurchaseLogger extends BaseAgent {
   }
 
   @Override
+  public boolean isSupportsInterimMessages() {
+    return false;
+  }
+
+  @Override
   public AgentType getAgentType() {
     return AgentType.AGENT;
   }

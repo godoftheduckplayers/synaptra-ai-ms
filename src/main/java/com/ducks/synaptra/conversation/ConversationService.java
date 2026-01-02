@@ -34,6 +34,15 @@ public class ConversationService implements AnswerExecutionListener, AgentExecut
 
     Agent currentAgent;
     if (CollectionUtils.isEmpty(agentExecutionState)) {
+      template.convertAndSendToUser(
+          sessionUUID,
+          "/queue/conversation",
+          new MessageDTO(
+              UUID.randomUUID().toString(),
+              "Olá, bem-vindo a Synaptra",
+              MessageType.BOT,
+              MessageStatus.FINISHED,
+              LocalDateTime.now()));
       currentAgent = new SynaptraSupervisor(List.of(new PurchaseLogger()));
     } else {
       currentAgent = agentExecutionState.get(sessionUUID);
