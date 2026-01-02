@@ -33,7 +33,9 @@ public class ConversationService implements AnswerExecutionListener, AgentExecut
   public void processMessage(Message<MessageDTO> message, String sessionUUID) {
 
     Agent currentAgent;
-    if (CollectionUtils.isEmpty(agentExecutionState)) {
+    if (CollectionUtils.isEmpty(agentExecutionState)
+        || !agentExecutionState.containsKey(sessionUUID)) {
+      // Executing the welcome message
       template.convertAndSendToUser(
           sessionUUID,
           "/queue/conversation",
