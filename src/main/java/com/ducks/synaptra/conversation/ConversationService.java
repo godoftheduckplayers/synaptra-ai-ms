@@ -1,41 +1,47 @@
 package com.ducks.synaptra.conversation;
 
-import com.ducks.synaptra.agent.Agent;
-import com.ducks.synaptra.agent.PurchaseLogger;
-import com.ducks.synaptra.agent.SynaptraSupervisor;
+import com.ducks.synaptra.agent.money.FinanceAgentBootstrapService;
 import com.ducks.synaptra.conversation.dto.MessageDTO;
 import com.ducks.synaptra.conversation.dto.MessageStatus;
 import com.ducks.synaptra.conversation.dto.MessageType;
+import com.ducks.synaptra.event.UserInputMessagePublisher;
+import com.ducks.synaptra.event.answer.AnswerExecutionListener;
+import com.ducks.synaptra.event.answer.model.AnswerRequestEvent;
 import com.ducks.synaptra.log.LogTracer;
-import com.ducks.synaptra.orchestration.event.agent.AgentExecutionListener;
-import com.ducks.synaptra.orchestration.event.agent.contract.AgentResponseEvent;
-import com.ducks.synaptra.orchestration.event.answer.AnswerExecutionListener;
-import com.ducks.synaptra.orchestration.event.answer.contract.AnswerResponseEvent;
-import com.ducks.synaptra.publisher.UserInputPublisher;
+import com.ducks.synaptra.model.agent.Agent;
+import com.ducks.synaptra.model.agent.ProviderConfig;
+import com.ducks.synaptra.state.AgentStateService;
 import java.time.LocalDateTime;
 import java.util.*;
-import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-@RequiredArgsConstructor
 @Service
-public class ConversationService implements AnswerExecutionListener, AgentExecutionListener {
-
-  private static final Map<String, Agent> agentExecutionState = new HashMap<>();
+public class ConversationService implements AnswerExecutionListener {
 
   private final SimpMessagingTemplate template;
-  private final UserInputPublisher userInputPublisher;
+  private final UserInputMessagePublisher userInputMessagePublisher;
+  private final AgentStateService agentExecutionState;
+  private final Agent supervisorParent;
+
+  public ConversationService(
+      SimpMessagingTemplate template,
+      UserInputMessagePublisher userInputMessagePublisher,
+      AgentStateService agentExecutionState,
+      FinanceAgentBootstrapService financeAgentBootstrapService) {
+    this.template = template;
+    this.userInputMessagePublisher = userInputMessagePublisher;
+    this.agentExecutionState = agentExecutionState;
+    ProviderConfig providerConfig = new ProviderConfig("gpt-4o-mini", 0.2, 256, 1.0);
+    supervisorParent = financeAgentBootstrapService.buildFinanceSupervisor(providerConfig);
+  }
 
   @LogTracer(spanName = "process_message")
   public void processMessage(Message<MessageDTO> message, String sessionUUID) {
 
-    Agent currentAgent;
-    if (CollectionUtils.isEmpty(agentExecutionState)
-        || !agentExecutionState.containsKey(sessionUUID)) {
-      // Executing the welcome message
+    Agent currentAgent = agentExecutionState.getCurrentAgent(sessionUUID);
+    if (currentAgent == null) {
       template.convertAndSendToUser(
           sessionUUID,
           "/queue/conversation",
@@ -45,29 +51,22 @@ public class ConversationService implements AnswerExecutionListener, AgentExecut
               MessageType.BOT,
               MessageStatus.FINISHED,
               LocalDateTime.now()));
-      currentAgent = new SynaptraSupervisor(List.of(new PurchaseLogger()));
-    } else {
-      currentAgent = agentExecutionState.get(sessionUUID);
+      currentAgent = supervisorParent;
     }
-
-    userInputPublisher.publishEvent(sessionUUID, currentAgent, message.getPayload().content());
+    userInputMessagePublisher.publisherUserMessage(
+        sessionUUID, currentAgent, message.getPayload().content());
   }
 
   @Override
-  public void onAnswerExecutionResponseEvent(AnswerResponseEvent answerResponseEvent) {
+  public void onAnswerExecutionResponseEvent(AnswerRequestEvent answerRequestEvent) {
     template.convertAndSendToUser(
-        answerResponseEvent.sessionId(),
+        answerRequestEvent.getSessionId(),
         "/queue/conversation",
         new MessageDTO(
             UUID.randomUUID().toString(),
-            answerResponseEvent.response(),
+            answerRequestEvent.getResponse(),
             MessageType.BOT,
             MessageStatus.FINISHED,
             LocalDateTime.now()));
-  }
-
-  @Override
-  public void onAgentResponseEvent(AgentResponseEvent agentResponseEvent) {
-    agentExecutionState.put(agentResponseEvent.sessionId(), agentResponseEvent.agent());
   }
 }
